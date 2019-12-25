@@ -3,27 +3,30 @@ import { Http, Headers } from '@angular/http';
 import { HttpModule } from '@angular/http';
 import 'rxjs/add/operator/map';
 import { tokenNotExpired } from 'angular2-jwt';
+import { environment } from 'environments/environment';
 
 @Injectable()
 export class AuthService {
   authToken: any;
   user: any;
+  isDev = false
+  env = environment
 
   constructor(private http: Http) {
-      this.isDev = true;  // Change to false before deployment
-      }
+    this.isDev = true;  // Change to false before deployment
+  }
 
   registerUser(user) {
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
-    return this.http.post('users/register', user, {headers: headers})
+    return this.http.post(`${this.env.apiUrl}users/register`, user, { headers: headers })
       .map(res => res.json());
   }
 
   authenticateUser(user) {
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
-    return this.http.post('users/authenticate', user, {headers: headers})
+    return this.http.post(`${this.env.apiUrl}users/login`, user, { headers: headers })
       .map(res => res.json());
   }
 
@@ -32,7 +35,7 @@ export class AuthService {
     this.loadToken();
     headers.append('Authorization', this.authToken);
     headers.append('Content-Type', 'application/json');
-    return this.http.get('users/profile', {headers: headers})
+    return this.http.get(`${this.env.apiUrl}users/profile`, { headers: headers })
       .map(res => res.json());
   }
 
